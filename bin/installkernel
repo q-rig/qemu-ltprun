@@ -1,0 +1,29 @@
+#! /bin/sh -e
+
+# Parse the command line options.  Of course, powerpc has to be all
+# different, and passes in a fifth argument, just because it is
+# "special". We ignore the fifth argument, and do not flag is as an
+# error, which it would be for any arch apart from powerpc
+if [ $# -eq 3 ] || [ $# -eq 4 ] || [ $# -eq 5 ] ; then
+  img="$2"
+  map="$3"
+  ver="$1"
+  if [ $# -ge 4 ] && [ -n "$4" ] ; then
+      dir="$4"
+  else
+      dir="/boot"
+  fi
+else
+  echo "Usage: installkernel <version> <image> <System.map> <directory>"
+  exit 1
+fi
+
+if [ "$(basename $img)" = "vmlinux" ] ; then
+  img_dest=vmlinux-$ver
+else
+  img_dest=vmlinuz-$ver
+fi
+
+cp "$img" "$dir/$img_dest"
+cp "$map" "$dir/System.map-$ver"
+cp ".config" "$dir/config-$ver"

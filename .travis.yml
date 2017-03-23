@@ -1,0 +1,56 @@
+language: c
+dist: jessie
+
+env:
+- ARCH: arm64
+- ARCH: armhf
+- ARCH: hppa
+- ARCH: arm64
+  LTP_CMDFILES: io,dio,pty,ipc,pipes,input,fcntl-locktests,filecaps,cap_bounds,nptl,hyperthreading,cpuhotplug,numa,hugetlb,timers,admin_tools,power_management_tests,kernel_misc,modules,can,net.ipv6_lib
+- ARCH: armhf
+  LTP_CMDFILES: io,dio,pty,ipc,pipes,input,fcntl-locktests,filecaps,cap_bounds,nptl,hyperthreading,cpuhotplug,numa,hugetlb,timers,admin_tools,power_management_tests,kernel_misc,modules,can,net.ipv6_lib
+- ARCH: arm64
+  LTP_CMDFILES: fs_perms_simple,fsx,fs_bind,fs_ext4,math
+- ARCH: armhf
+  LTP_CMDFILES: fs_perms_simple,fsx,fs_bind,fs_ext4,math
+- ARCH: arm64
+  LTP_CMDFILES: containers,connectors,commands
+- ARCH: armhf
+  LTP_CMDFILES: containers,connectors,commands,controllers
+- ARCH: arm64
+  LTP_CMDFILES: fs
+- ARCH: armhf
+  LTP_CMDFILES: fs
+- ARCH: arm64
+  LTP_CMDFILES: mm
+- ARCH: armhf
+  LTP_CMDFILES: mm
+- ARCH: arm64
+  LTP_CMDFILES: sched
+- ARCH: armhf
+  LTP_CMDFILES: sched
+- ARCH: arm64
+  LTP_CMDFILES: syscalls
+- ARCH: armhf
+  LTP_CMDFILES: syscalls
+- ARCH: arm64
+  LTP_CMDFILES: controllers
+
+before_install:
+- make travis-prepare
+- sh travis-skip || sudo rm -rf /etc/dpkg/dpkg.cfg.d/multiarch /etc/apt/sources.list* && sudo touch /etc/apt/sources.list
+- sh travis-skip || sudo wget -qO - https://ftp-master.debian.org/keys/archive-key-8.asc | sudo apt-key add -
+- sh travis-skip || sudo add-apt-repository "deb http://deb.debian.org/debian unstable main"
+- sh travis-skip || sudo apt-get -qq remove -y locales icedtea-netx libatk-wrapper-java fontconfig netbase
+- sh travis-skip || sudo apt-get -qq update
+- sh travis-skip || sudo apt-get -qq install -y locales-all cloud-utils cloud-guest-utils flex autoconf libssl-dev git jq
+- sh travis-skip || sudo apt-get -qq install -y binutils-multiarch gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-hppa-linux-gnu gcc-hppa64-linux-gnu
+- sh travis-skip || sudo apt-get -qq install -y vmdebootstrap qemu-system-arm qemu-user-static qemu-efi parted
+- sh travis-skip || sudo apt-get -qq install -y dpkg-dev libglib2.0-dev libpixman-1-dev libfdt-dev
+
+script: while true; do echo ''; sleep 300; done & pid=$!; make travis-build-$ARCH travis-run-$ARCH; ret=$?; kill $pid; sh -c "exit $ret"
+
+deploy:
+  provider: script
+  script: make travis-deploy-$ARCH
+  skip_cleanup: true

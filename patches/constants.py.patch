@@ -1,0 +1,11 @@
+--- a/dist-packages/vmdebootstrap/constants.py	2017-03-15 12:05:22.897420911 +0100
++++ b/dist-packages/vmdebootstrap/constants.py	2017-03-15 12:05:34.625661136 +0100
+@@ -46,7 +46,7 @@
+         'package': 'grub-efi-arm64',
+         'bin_package': 'grub-efi-arm64-bin',
+         'extra': None,
+-        'exclusive': True,
++        'exclusive': False,
+         'target': 'arm64-efi',
+     }
+ }

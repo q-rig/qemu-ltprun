@@ -1,0 +1,10 @@
+[Unit]
+Description=Linux Test Project runner
+ConditionKernelCommandLine=runltp
+
+[Service]
+ExecStart=/opt/ltp/runltp-service
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
